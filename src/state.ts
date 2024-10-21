@@ -32,9 +32,8 @@ class Observer {
   addToast = (data: ToastT) => {
     if (this.toasts.length >= this.maxToasts) {
       // Remove the oldest toast
-      const [oldestToast, ...remainingToasts] = this.toasts;
+      const oldestToast = this.toasts.shift();
       this.dismiss(oldestToast.id);
-      this.toasts = remainingToasts;
     }
 
     this.publish(data);
