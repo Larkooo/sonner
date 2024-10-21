@@ -7,10 +7,12 @@ let toastsCounter = 1;
 class Observer {
   subscribers: Array<(toast: ExternalToast | ToastToDismiss) => void>;
   toasts: Array<ToastT | ToastToDismiss>;
+  maxToasts: number;
 
-  constructor() {
+  constructor(maxToasts: number = 5) {
     this.subscribers = [];
     this.toasts = [];
+    this.maxToasts = maxToasts;
   }
 
   // We use arrow functions to maintain the correct `this` reference
@@ -28,6 +30,13 @@ class Observer {
   };
 
   addToast = (data: ToastT) => {
+    if (this.toasts.length >= this.maxToasts) {
+      // Remove the oldest toast
+      const [oldestToast, ...remainingToasts] = this.toasts;
+      this.dismiss(oldestToast.id);
+      this.toasts = remainingToasts;
+    }
+
     this.publish(data);
     this.toasts = [...this.toasts, data];
   };
